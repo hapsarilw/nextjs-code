@@ -8,7 +8,9 @@ function PortofolioProjectPage() {
 
   // send request to some backend server
   // to fetch the piece of ata with an id of router.query.projectid
+
   
+
 
 
   return (
