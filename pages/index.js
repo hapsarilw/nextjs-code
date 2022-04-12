@@ -1,7 +1,7 @@
 import { getFeaturedEvents } from "../helpers/api-util";
 import EventList from "../components/events/event-list";
 
-function HomePage(props) {  
+function HomePage(props) {
   return (
     <div>
       <EventList items={props.events} />
@@ -16,6 +16,7 @@ export async function getStaticProps() {
     props: {
       events: featuredEvents,
     },
+    revalidate: 1800,
   };
 }
 

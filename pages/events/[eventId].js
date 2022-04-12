@@ -1,23 +1,21 @@
-import { Fragment } from 'react';
-import { useRouter } from 'next/router';
+import { Fragment } from "react";
 
-import { getEventById } from '../../dummy-data';
-import EventSummary from '../../components/event-detail/event-summary';
-import EventLogistics from '../../components/event-detail/event-logistics';
-import EventContent from '../../components/event-detail/event-content';
-import ErrorAlert from '../../components/ui/error-alert';
+import { getFeaturedEvents, getEventById } from "../../helpers/api-util";
+import EventSummary from "../../components/event-detail/event-summary";
+import EventLogistics from "../../components/event-detail/event-logistics";
+import EventContent from "../../components/event-detail/event-content";
+import ErrorAlert from "../../components/ui/error-alert";
 
-function EventDetailPage() {
-  const router = useRouter();
+function EventDetailPage(props) {
+  const event = props.selectedEvent;
 
-  const eventId = router.query.eventId;
-  const event = getEventById(eventId);
+
 
   if (!event) {
     return (
-      <ErrorAlert>
-        <p>No event found!</p>
-      </ErrorAlert>
+      <div className="center">
+        <p>Loading...</p>
+      </div>
     );
   }
 
@@ -35,6 +33,33 @@ function EventDetailPage() {
       </EventContent>
     </Fragment>
   );
+}
+
+export async function getStaticProps(context) {
+  const eventId = context.params.eventId; // give access to eventId page
+
+  const event = await getEventById(eventId);
+
+  return {
+    props: {
+      selectedEvent: event,
+    },
+    revalidate: 30 // if new request come in & more than 30 seconds -> it will generate again
+  };
+}
+
+// which paramatere values should render
+export async function getStaticPaths() {
+  const events = await getFeaturedEvents();
+
+  const paths = events.map((event) => ({ params: { eventId: event.id } }));
+  return {
+    paths: paths,
+    fallback: 'blocking', 
+  }; 
+  // false because we try to load this unknown page, if true return 404
+  // true -> tellig next.js there are more pages than the one we prepared here
+  // blocking -> tellig next.js not serve anythin until we're done generating this page
 }
 
 export default EventDetailPage;
