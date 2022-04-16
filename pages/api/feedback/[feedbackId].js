@@ -1,5 +1,6 @@
 // create /feedback/some-id
-import { buildFeedbackPath, extractFeedback } from "./feedback";
+import { buildFeedbackPath, extractFeedback } from ".";
+// /api/some-value/more-segments
 
 function handler(req, res) {
   // return selected feedback
@@ -13,3 +14,5 @@ function handler(req, res) {
 }
 
 export default handler;
+
+// /api/feedback/some-value -> more stryctured path
