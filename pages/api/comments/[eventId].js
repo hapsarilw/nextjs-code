@@ -28,7 +28,7 @@ function handler(req, res) {
       {id: 'c2', name: 'Manuel',text:'A second commeent!' }
     ]
 
-    res.status(200).json({comment: dummyList});
+    res.status(200).json({comments: dummyList});
   }
 }
 
