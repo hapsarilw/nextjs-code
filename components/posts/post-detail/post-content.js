@@ -1,5 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 import PostHeader from "./post-header";
 import classes from "./post-content.module.css";
@@ -10,9 +12,17 @@ function PostContent(props) {
   const imagePath = `/images/posts/${post.slug}/${post.image}`;
 
   const customRenderers = {
-    // will called method if its find a image
+    // image(image) {
+    //   return (
+    //     <Image
+    //       src={`/images/posts/${post.slug}/${image.src}`}
+    //       alt={image.alt}
+    //       width={600}
+    //       height={300}
+    //     />
+    //   );
+    // },
     paragraph(paragraph) {
-      // Only wanna override the default if we actually find a image
       const { node } = paragraph;
 
       if (node.children[0].type === "image") {
@@ -21,7 +31,7 @@ function PostContent(props) {
         return (
           <div className={classes.image}>
             <Image
-              src={`/images/posts/${post.slug}/${image.src}`}
+              src={`/images/posts/${post.slug}/${image.url}`}
               alt={image.alt}
               width={600}
               height={300}
@@ -30,14 +40,27 @@ function PostContent(props) {
         );
       }
 
-      return <p>{paragraph.children}</p>
+      return <p>{paragraph.children}</p>;
+    },
+
+    code({className, children}) {
+      const match = /language-(\w+)/.exec(className || "");
+
+      return (
+        <SyntaxHighlighter
+          language={match[1]}
+          PreTag="div"
+          style={atomDark}
+          children={children}
+        />
+      );
     },
   };
 
   return (
     <article className={classes.content}>
       <PostHeader title={post.title} image={imagePath} />
-      <ReactMarkdown renders={customRenderers}>{post.content}</ReactMarkdown>
+      <ReactMarkdown components={customRenderers}>{post.content}</ReactMarkdown>
     </article>
   );
 }
