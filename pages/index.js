@@ -1,34 +1,38 @@
+import { Fragment } from "react";
 import Head from 'next/head';
 
-import { getFeaturedEvents } from '../helpers/api-util';
-import EventList from '../components/events/event-list';
-import NewsletterRegistration from '../components/input/newsletter-registration';
+import FeaturedPosts from "../components/home-page/featured-posts";
+import Hero from "../components/home-page/hero";
+import { getFeaturedPosts } from "../lib/posts-util";
 
 function HomePage(props) {
   return (
-    <div>
+    <Fragment>
       <Head>
-        <title>NextJS Events</title>
-        <meta
-          name='description'
-          content='Find a lot of great events that allow you to evolve...'
-        />
+        <title>Max's blog </title>
+        <meta name='description' content='I post about prgramming and web development'></meta>
       </Head>
-      <NewsletterRegistration />
-      <EventList items={props.events} />
-    </div>
+      <Hero />
+      <FeaturedPosts posts={props.posts} />
+    </Fragment>
   );
 }
 
-export async function getStaticProps() {
-  const featuredEvents = await getFeaturedEvents();
+export function getStaticProps(){
+  // get all featured posts
+  const featuredPosts = getFeaturedPosts();
 
   return {
     props: {
-      events: featuredEvents,
-    },
-    revalidate: 1800,
-  };
+      posts: featuredPosts
+    }
+    // not use revalidate -> execute once outside of development 
+    // during development -> will executed for every request
+    // outside development -> will executed only once
+  }
 }
 
 export default HomePage;
+
+// 1) Hero => Present ourselves
+// 2) Featured Posts
